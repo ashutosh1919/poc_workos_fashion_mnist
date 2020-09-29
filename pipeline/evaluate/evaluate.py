@@ -6,6 +6,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint
 import yaml
 import pickle
 import os
+import json
 import sys
 
 params = yaml.safe_load(open('params.yaml'))['evaluate']
@@ -21,6 +22,8 @@ verbose = params['seed']
 data_path = sys.argv[1]
 model_code_dir = sys.argv[2]
 model_ckpt_dir = sys.argv[3]
+os.makedirs("results")
+out_file = os.path.join("results", "metrics.json")
 
 def load_data(pkl_filepath):
     with open(pkl_filepath, "rb") as f:
@@ -38,4 +41,13 @@ print("Evaluation results: ")
 print("Loss: ", loss)
 print("Accuracy: ", acc)
 print("MSE", mse)
+with open(out_file, "w") as f:
+    json.dump(
+        {
+            "Accuracy": acc,
+            "Loss": loss,
+            "MSE": mse
+        },
+        f
+    )
 print("Evaluation stage completed...")

@@ -40,7 +40,9 @@ stages:
     deps:
     - data/prepared/test.pkl
     - model/LeNet_checkpoints
-    - pipeline/evaluate/evaluate.py
     - pipeline/train/model.py
     params:
     - evaluate.seed
+    metrics:
+    - results/metrics.json:
+        cache: false
