@@ -1,0 +1,4 @@
+__pycache__
+.dvc
+dvc.lock
+.DS_Store

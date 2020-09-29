@@ -1,0 +1,46 @@
+stages:
+  extract_data:
+    cmd: python pipeline/extract_data/extract_data.py
+    deps:
+    - pipeline/extract_data/extract_data.py
+    params:
+    - extract.test_samples
+    - extract.train_samples
+    outs:
+    - data/raw
+  prepare:
+    cmd: python pipeline/prepare/prepare.py data/raw/train.tfrecord data/raw/test.tfrecord
+    deps:
+    - data/raw/test.tfrecord
+    - data/raw/train.tfrecord
+    - pipeline/prepare/prepare.py
+    params:
+    - prepare.n_classes
+    - prepare.norm_const
+    outs:
+    - data/prepared
+  train:
+    cmd: python pipeline/train/train.py data/prepared/train.pkl data/prepared/test.pkl
+      pipeline/train/
+    deps:
+    - data/prepared/test.pkl
+    - data/prepared/train.pkl
+    - pipeline/train/model.py
+    - pipeline/train/train.py
+    params:
+    - train.epochs
+    - train.metrics
+    - train.n_classes
+    - train.optimizer
+    outs:
+    - model/LeNet_checkpoints
+  evaluate:
+    cmd: python pipeline/evaluate/evaluate.py data/prepared/test.pkl pipeline/train/
+      model/LeNet_checkpoints/best.ckpt
+    deps:
+    - data/prepared/test.pkl
+    - model/LeNet_checkpoints
+    - pipeline/evaluate/evaluate.py
+    - pipeline/train/model.py
+    params:
+    - evaluate.seed

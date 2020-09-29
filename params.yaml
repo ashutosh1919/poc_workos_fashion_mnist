@@ -1,0 +1,16 @@
+extract:
+  train_samples: 1024
+  test_samples: 64
+
+prepare:
+  norm_const: 255
+  n_classes: 10
+
+train:
+  n_classes: 10
+  epochs: 10
+  optimizer: "adam"
+  metrics: ["accuracy", "mse"]
+
+evaluate:
+  seed: 2
