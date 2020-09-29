@@ -22,7 +22,7 @@ verbose = params['seed']
 data_path = sys.argv[1]
 model_code_dir = sys.argv[2]
 model_ckpt_dir = sys.argv[3]
-os.makedirs("results")
+os.makedirs(os.path.join('.', 'results'), exist_ok=True)
 out_file = os.path.join("results", "metrics.json")
 
 def load_data(pkl_filepath):
