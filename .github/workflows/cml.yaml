@@ -22,7 +22,7 @@ jobs:
           
           git fetch --prune --unshallow
 
-          git diff --cached params.yaml --show-md develop >> report.md
+          git diff develop -- params.yaml  >> report.md
 
           dvc metrics diff --show-md develop >> report.md
 
