@@ -8,7 +8,7 @@ prepare:
 
 train:
   n_classes: 10
-  epochs: 10
+  epochs: 50
   optimizer: "adam"
   metrics: ["accuracy", "mse"]
 
