@@ -24,10 +24,10 @@ jobs:
           echo"HYPERPARAMETER CHANGES"
           git diff --cached params.yaml --show-md >> report.md
 
-          echo"EVALUATION METRICS"
+          echo "EVALUATION METRICS"
           dvc metrics diff --show-md develop >> report.md
 
-          echo"EVALUATION METRIC PLOTS"
+          echo "EVALUATION METRIC PLOTS"
           vl2png results/train_stats_loss.json -s 1.5 | cml-publish --md >> report.md
           vl2png results/train_stats_acc.json -s 1.5 | cml-publish --md >> report.md
           vl2png results/train_stats_mse.json -s 1.5 | cml-publish --md >> report.md
