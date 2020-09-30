@@ -1,0 +1,7 @@
+/train_stats.csv
+/train_stats_loss.csv
+/train_stats_acc.csv
+/train_stats_mse.csv
+/train_stats_loss.json
+/train_stats_acc.json
+/train_stats_mse.json

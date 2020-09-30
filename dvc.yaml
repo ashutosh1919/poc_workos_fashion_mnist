@@ -21,12 +21,13 @@ stages:
     - data/prepared
   train:
     cmd: python pipeline/train/train.py data/prepared/train.pkl data/prepared/test.pkl
-      pipeline/train/
+      schema/plot.json pipeline/train/
     deps:
     - data/prepared/test.pkl
     - data/prepared/train.pkl
     - pipeline/train/model.py
     - pipeline/train/train.py
+    - schema/plot.json
     params:
     - train.epochs
     - train.metrics
@@ -34,6 +35,13 @@ stages:
     - train.optimizer
     outs:
     - model/LeNet_checkpoints
+    plots:
+    - results/train_stats_acc.json:
+        cache: false
+    - results/train_stats_loss.json:
+        cache: false
+    - results/train_stats_mse.json:
+        cache: false
   evaluate:
     cmd: python pipeline/evaluate/evaluate.py data/prepared/test.pkl pipeline/train/
       model/LeNet_checkpoints/best.ckpt

@@ -1,0 +1,13 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+    "data": {
+      "values": []
+    },
+    "title": "",
+    "mark": {"type": "line"},
+    "encoding": {
+      "x": {},
+      "y": {},
+      "color": {}
+    }
+  }
