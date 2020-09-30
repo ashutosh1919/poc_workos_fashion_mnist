@@ -9,7 +9,7 @@ prepare:
 train:
   n_classes: 10
   epochs: 50
-  optimizer: "adam"
+  optimizer: "adagrad"
   metrics: ["accuracy", "mse"]
 
 evaluate:

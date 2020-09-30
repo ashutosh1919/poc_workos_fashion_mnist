@@ -21,6 +21,9 @@ jobs:
           dvc repro 
           
           git fetch --prune --unshallow
+
+          dvc params diff --show-md develop  >> report.md
+
           dvc metrics diff --show-md develop >> report.md
 
           vl2png results/train_stats_loss.json -s 1.5 | cml-publish --md >> report.md

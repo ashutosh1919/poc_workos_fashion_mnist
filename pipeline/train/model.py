@@ -2,11 +2,6 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.losses import categorical_crossentropy
 from tensorflow.keras.layers import Dense, Flatten, Conv2D, AveragePooling2D
-from tensorflow.keras.callbacks import ModelCheckpoint
-import yaml
-import pickle
-import os
-import sys
 
 
 class LeNet(Sequential):

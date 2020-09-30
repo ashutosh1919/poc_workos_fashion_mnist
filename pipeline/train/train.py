@@ -1,7 +1,4 @@
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.losses import categorical_crossentropy
-from tensorflow.keras.layers import Dense, Flatten, Conv2D, AveragePooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
 import pandas as pd
 import json
@@ -79,7 +76,7 @@ x_train, y_train = load_data(input_train)
 x_test, y_test = load_data(input_test)
 
 sys.path.append(model_code_dir)
-from model import *
+from model import LeNet
 
 model = LeNet(x_train[0].shape, n_classes, optimizer, metrics)
 checkpoint = ModelCheckpoint(output_model, 
