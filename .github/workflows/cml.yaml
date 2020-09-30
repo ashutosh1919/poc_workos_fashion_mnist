@@ -1,4 +1,4 @@
-name: train-my-model
+name: fashion_mnist_train_pipeline
 
 on: [push]
 
@@ -22,5 +22,9 @@ jobs:
           
           git fetch --prune --unshallow
           dvc metrics diff --show-md develop >> report.md
+
+          vl2png results/train_stats_loss.json -s 1.5 | cml-publish --md >> report.md
+          vl2png results/train_stats_acc.json -s 1.5 | cml-publish --md >> report.md
+          vl2png results/train_stats_mse.json -s 1.5 | cml-publish --md >> report.md
         
           cml-send-comment report.md 
