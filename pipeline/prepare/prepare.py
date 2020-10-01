@@ -39,7 +39,7 @@ def read_dataset(input_path):
 def unzip_data(ds):
     images = []
     labels = []
-    for el in train_ds:
+    for el in ds:
         images.append( el["image"].numpy())
         labels.append( el["label"].numpy())
     images = np.array(images)
