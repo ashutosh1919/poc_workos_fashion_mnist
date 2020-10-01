@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 import pandas as pd
 import json
 import yaml
@@ -85,7 +85,10 @@ checkpoint = ModelCheckpoint(output_model,
                              save_best_only=True,
                              save_weights_only=True,
                              mode='max')
-callbacks_list = [checkpoint, StatReaderCallback()]
+earlystopping = EarlyStopping(monitor='val_loss',
+                              patience=10,
+                              restore_best_weights=True)
+callbacks_list = [checkpoint, earlystopping, StatReaderCallback()]
 model.fit(x=x_train, 
           y=y_train, 
           epochs=epochs,

@@ -8,8 +8,8 @@ prepare:
 
 train:
   n_classes: 10
-  epochs: 50
-  optimizer: "adagrad"
+  epochs: 60
+  optimizer: "rmsprop"
   metrics: ["accuracy", "mse"]
 
 evaluate:
