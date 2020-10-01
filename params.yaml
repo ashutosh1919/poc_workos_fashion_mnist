@@ -1,6 +1,6 @@
 extract:
-  train_samples: 1024
-  test_samples: 64
+  train_samples: 2048
+  test_samples: 128
 
 prepare:
   norm_const: 255
@@ -9,7 +9,7 @@ prepare:
 train:
   n_classes: 10
   epochs: 50
-  optimizer: "adagrad"
+  optimizer: "adam"
   metrics: ["accuracy", "mse"]
 
 evaluate:
