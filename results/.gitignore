@@ -5,3 +5,4 @@
 /train_stats_loss.json
 /train_stats_acc.json
 /train_stats_mse.json
+/confusion_matrix.png

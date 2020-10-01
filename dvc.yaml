@@ -48,9 +48,16 @@ stages:
     deps:
     - data/prepared/test.pkl
     - model/LeNet_checkpoints
+    - pipeline/evaluate/evaluate.py
     - pipeline/train/model.py
     params:
+    - evaluate.class_names
     - evaluate.seed
+    - train.metrics
+    - train.n_classes
+    - train.optimizer
     metrics:
     - results/metrics.json:
         cache: false
+    outs:
+    - results/confusion_matrix.png
