@@ -22,7 +22,7 @@
             }
         },
         "color": {
-            "field": "Parameter",
+            "field": "rev",
             "type": "nominal"
         }
     }

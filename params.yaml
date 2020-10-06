@@ -10,7 +10,10 @@ train:
   n_classes: 10
   epochs: 50
   optimizer: "adagrad"
-  metrics: ["accuracy", "mse"]
+
+  # Choose from the below metrics to be reported for the Image classification model
+  # categorical_crossentropy, categorical_hinge, kullback_leibler_divergence, accuracy, Precision, Recall
+  metrics: ["categorical_crossentropy", "accuracy", "Precision", "Recall"]
 
 evaluate:
   seed: 2
