@@ -79,7 +79,7 @@ def plot_cm(y_true, y_pred, filename, figsize=(10,10)):
     figure.savefig(filename)
 
 sys.path.append(model_code_dir)
-from pipeline.train.model import LeNet
+from model import *
 
 images, labels = load_data(data_path)
 restored_model = LeNet(images[0].shape, n_classes, optimizer, metrics)
