@@ -1,17 +1,21 @@
 prepare:
-  train_samples: 1024
-  test_samples: 64
+  train_samples: 2000
+  test_samples: 500
   norm_const: 255
   n_classes: 10
 
 train:
   n_classes: 10
   epochs: 50
-  batch_size: 16
+  batch_size: 64
   shuffle_buffer_size: 100
   optimizer: "adagrad"
   metrics: ["accuracy", "mse"]
 
 evaluate:
   seed: 2
-  class_names: ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+  class_names: ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt',
+                'Sneaker', 'Bag', 'Ankle boot']
+  # Choose from the below metrics to be reported for the Image classification model
+  # categorical_crossentropy, categorical_hinge, kullback_leibler_divergence, accuracy, Precision, Recall
+  metrics: [ "categorical_crossentropy", "accuracy", "Precision", "Recall" , "categorical_hinge" ]

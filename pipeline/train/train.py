@@ -76,6 +76,7 @@ def restructure_df(res, out_file):
         f.write(text)
 
 
+# Prepare the Dataloader
 train_images, train_labels, test_images, test_labels = load_data(input_dataset)
 train_dataset = tf.data.Dataset.from_tensor_slices((train_images, train_labels))
 test_dataset = tf.data.Dataset.from_tensor_slices((test_images, test_labels))
@@ -86,7 +87,6 @@ sys.path.append(model_code_dir)
 
 
 from model import LeNet
-
 model = LeNet(train_images[0].shape, n_classes, optimizer, metrics)
 checkpoint = ModelCheckpoint(output_model, 
                              monitor='val_accuracy',

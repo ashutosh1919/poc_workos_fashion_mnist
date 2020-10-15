@@ -24,7 +24,7 @@ verbose = params['seed']
 class_names = params['class_names']
 n_classes = train_params['n_classes']
 optimizer = train_params['optimizer']
-metrics = train_params['metrics']
+metrics = params["metrics"]
 
 data_path = sys.argv[1]
 model_code_dir = sys.argv[2]
@@ -80,8 +80,6 @@ from model import *
 
 # Load test-dataset
 test_images, test_labels = load_data(data_path)
-test_dataset = tf.data.Dataset.from_tensor_slices((test_images, test_labels))
-
 restored_model = LeNet(test_images[0].shape, n_classes, optimizer, metrics)
 restored_model.load_weights(model_ckpt_dir)
 
@@ -90,20 +88,17 @@ y_pred = get_true_labels(preds)
 y_true = get_true_labels(test_labels)
 plot_cm(y_true, y_pred, out_confusion_png)
 
-loss, acc, mse = restored_model.evaluate(test_dataset, verbose=2)
-print("Evaluation results: ")
-print("Loss: ", loss)
-print("Accuracy: ", acc)
-print("MSE", mse)
+loss, *eval_list = restored_model.evaluate(test_images, test_labels, verbose=2)
 
+eval_dict = {}
+print("EVALUATION METRICS ...")
+for mt_key, mt_val in zip(metrics, eval_list):
+    eval_dict.update({mt_key: mt_val})
+    print(f"{mt_key}: ", mt_val)
+    print()
 
 with open(out_file, "w") as f:
-    json.dump(
-        {
-            "Accuracy": acc,
-            "Loss": loss,
-            "MSE": mse
-        },
-        f
-    )
+    json.dump(eval_dict, f)
+
+
 print("Evaluation stage completed...")

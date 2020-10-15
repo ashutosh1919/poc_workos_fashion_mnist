@@ -8,6 +8,13 @@ import sys
 import numpy as np
 import pickle
 
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+
+gauth = GoogleAuth()
+gauth.LocalWebserverAuth()
+drive = GoogleDrive(gauth)
+
 params = yaml.safe_load(open('params.yaml'))['prepare']
 
 if len(sys.argv)!=3:
@@ -64,6 +71,7 @@ def save_processed(sets, filename):
 
 
 # Read Raw Dataset from drive
+
 train_ds = read_dataset(input_train)
 test_ds = read_dataset(input_test)
 
