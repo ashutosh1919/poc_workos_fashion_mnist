@@ -3,9 +3,6 @@ stages:
     cmd: python pipeline/extract_data/extract_data.py
     deps:
     - pipeline/extract_data/extract_data.py
-    params:
-    - extract.test_samples
-    - extract.train_samples
     outs:
     - data/raw
   prepare:
@@ -17,14 +14,15 @@ stages:
     params:
     - prepare.n_classes
     - prepare.norm_const
+    - prepare.train_samples
+    - prepare.test_samples
     outs:
     - data/prepared
   train:
-    cmd: python pipeline/train/train.py data/prepared/train.pkl data/prepared/test.pkl
+    cmd: python pipeline/train/train.py data/prepared/processed.npz
       schema/plot.json pipeline/train/
     deps:
-    - data/prepared/test.pkl
-    - data/prepared/train.pkl
+    - data/prepared/processed.npz
     - pipeline/train/model.py
     - pipeline/train/train.py
     - schema/plot.json
@@ -33,6 +31,8 @@ stages:
     - train.metrics
     - train.n_classes
     - train.optimizer
+    - train.batch_size
+    - train.shuffle_buffer_size
     outs:
     - model/LeNet_checkpoints
     plots:
@@ -43,10 +43,9 @@ stages:
     - results/train_stats_mse.json:
         cache: false
   evaluate:
-    cmd: python pipeline/evaluate/evaluate.py data/prepared/test.pkl pipeline/train/
+    cmd: python pipeline/evaluate/evaluate.py data/prepared/processed.npz pipeline/train/
       model/LeNet_checkpoints/best.ckpt
     deps:
-    - data/prepared/test.pkl
     - model/LeNet_checkpoints
     - pipeline/evaluate/evaluate.py
     - pipeline/train/model.py

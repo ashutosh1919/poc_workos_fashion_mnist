@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras.callbacks import ModelCheckpoint
 import pandas as pd
+import numpy as np
 import json
 import yaml
 import pickle
@@ -9,10 +10,6 @@ import sys
 
 
 params = yaml.safe_load(open('params.yaml'))['train']
-
-if len(sys.argv)!=5:
-    print("Not passed enough arguements to train stage.")
-    sys.exit(1)
 
 print("Starting the training stage...")
 
@@ -29,19 +26,24 @@ out_file_loss = os.path.join("results", "train_stats_loss.json")
 out_file_acc = os.path.join("results", "train_stats_acc.json")
 out_file_mse = os.path.join("results", "train_stats_mse.json")
 
-input_train = sys.argv[1]
-input_test = sys.argv[2]
-input_result_schema = sys.argv[3]
-model_code_dir = sys.argv[4]
+input_dataset = sys.argv[1]
+input_result_schema = sys.argv[2]
+model_code_dir = sys.argv[3]
 
 cb_res_loss = pd.DataFrame(columns=["train_loss", "val_loss"])
 cb_res_acc = pd.DataFrame(columns=["train_acc", "val_acc"])
 cb_res_mse = pd.DataFrame(columns=["train_mse", "val_mse"])
 
-def load_data(pkl_filepath):
-    with open(pkl_filepath, "rb") as f:
-        data = pickle.load(f)
-    return data["images"], data["labels"]
+
+def load_data(filepath):
+    data = np.load(filepath)
+    train_examples = data['x_train']
+    train_labels = data['y_train']
+    test_examples = data['x_test']
+    test_labels = data['y_test']
+
+    return train_examples, train_labels, test_examples, test_labels
+
 
 class StatReaderCallback(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
@@ -51,6 +53,7 @@ class StatReaderCallback(tf.keras.callbacks.Callback):
             cb_res_mse.loc[epoch] = [logs["mse"], logs["val_mse"]]
         except:
             print("Error Extracting Values at the end of epoch.")
+
 
 def restructure_df(res, out_file):
     cols = res.columns
@@ -72,13 +75,19 @@ def restructure_df(res, out_file):
     with open(out_file, "w") as f:
         f.write(text)
 
-x_train, y_train = load_data(input_train)
-x_test, y_test = load_data(input_test)
+
+train_images, train_labels, test_images, test_labels = load_data(input_dataset)
+train_dataset = tf.data.Dataset.from_tensor_slices((train_images, train_labels))
+test_dataset = tf.data.Dataset.from_tensor_slices((test_images, test_labels))
+train_dataset = train_dataset.shuffle(params["shuffle_buffer_size"]).batch(params["batch_size"])
+test_dataset = test_dataset.batch(params["batch_size"])
 
 sys.path.append(model_code_dir)
+
+
 from model import LeNet
 
-model = LeNet(x_train[0].shape, n_classes, optimizer, metrics)
+model = LeNet(train_images[0].shape, n_classes, optimizer, metrics)
 checkpoint = ModelCheckpoint(output_model, 
                              monitor='val_accuracy',
                              verbose=1,
@@ -86,10 +95,9 @@ checkpoint = ModelCheckpoint(output_model,
                              save_weights_only=True,
                              mode='max')
 callbacks_list = [checkpoint, StatReaderCallback()]
-model.fit(x=x_train, 
-          y=y_train, 
+model.fit(train_dataset,
           epochs=epochs,
-          validation_data=(x_test, y_test),
+          validation_data=test_dataset,
           verbose=1,
           callbacks=callbacks_list)
 

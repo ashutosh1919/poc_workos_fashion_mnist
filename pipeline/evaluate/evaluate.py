@@ -17,17 +17,12 @@ import sys
 params = yaml.safe_load(open('params.yaml'))['evaluate']
 train_params = yaml.safe_load(open('params.yaml'))['train']
 
-if len(sys.argv)!=4:
-    print("Not passed enough arguements to evaluate stage.")
-    sys.exit(1)
 
 print("Starting evaluation stage...")
 
 verbose = params['seed']
 class_names = params['class_names']
-
 n_classes = train_params['n_classes']
-epochs = train_params['epochs']
 optimizer = train_params['optimizer']
 metrics = train_params['metrics']
 
@@ -38,10 +33,14 @@ os.makedirs(os.path.join('.', 'results'), exist_ok=True)
 out_file = os.path.join("results", "metrics.json")
 out_confusion_png = os.path.join("results", "confusion_matrix.png")
 
-def load_data(pkl_filepath):
-    with open(pkl_filepath, "rb") as f:
-        data = pickle.load(f)
-    return data["images"], data["labels"]
+
+def load_data(filepath):
+    data = np.load(filepath)
+    test_examples = data['x_test']
+    test_labels = data['y_test']
+
+    return test_examples, test_labels
+
 
 def get_true_labels(labels):
     y = []
@@ -49,6 +48,7 @@ def get_true_labels(labels):
         index = np.argmax(labels[i])
         y.append(class_names[index])
     return np.array(y)
+
 
 def plot_cm(y_true, y_pred, filename, figsize=(10,10)):
     cm = confusion_matrix(y_true, y_pred, labels=np.unique(y_true))
@@ -78,20 +78,25 @@ def plot_cm(y_true, y_pred, filename, figsize=(10,10)):
 sys.path.append(model_code_dir)
 from model import *
 
-images, labels = load_data(data_path)
-restored_model = LeNet(images[0].shape, n_classes, optimizer, metrics)
+# Load test-dataset
+test_images, test_labels = load_data(data_path)
+test_dataset = tf.data.Dataset.from_tensor_slices((test_images, test_labels))
+
+restored_model = LeNet(test_images[0].shape, n_classes, optimizer, metrics)
 restored_model.load_weights(model_ckpt_dir)
 
-preds = restored_model.predict(images)
+preds = restored_model.predict(test_images)
 y_pred = get_true_labels(preds)
-y_true = get_true_labels(labels)
+y_true = get_true_labels(test_labels)
 plot_cm(y_true, y_pred, out_confusion_png)
 
-loss, acc, mse = restored_model.evaluate(images, labels, verbose=2)
+loss, acc, mse = restored_model.evaluate(test_dataset, verbose=2)
 print("Evaluation results: ")
 print("Loss: ", loss)
 print("Accuracy: ", acc)
 print("MSE", mse)
+
+
 with open(out_file, "w") as f:
     json.dump(
         {
